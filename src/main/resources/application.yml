@@ -1,0 +1,35 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /community
+
+spring:
+  application:
+    name: nowcoder-community # 应用名称,可选
+  thymeleaf: # ThymeleafProperties
+    cache: false
+  datasource: # DataSourceProperties
+    type: com.alibaba.druid.pool.DruidDataSource # 使用druid管理连接
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/community?characterEncoding=utf-8&useSSL=false&serverTimezone=Hongkong
+    username: root
+    password: wdmysqlmm123
+
+mybatis-plus:
+  configuration:
+    #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射 (mybatis-plus)
+    #如表名address_book -> 类名AddressBook
+    #如字段user_name -> userName
+    map-underscore-to-camel-case: true
+    # 使用配置方式开启日志,设置日志输出方式为标准输出,查阅SQL执行日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    useGeneratedKeys: true
+  mapper-locations: classpath:mapper/*.xml # mapper.xml文件位置
+  type-aliases-package: com.nowcoder.community.entity
+
+# logger
+logging:
+  level:
+    com.nowcoder.community: debug
+  file:
+    name: d:/community/data/nowcoder/community.log
