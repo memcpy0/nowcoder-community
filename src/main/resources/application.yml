@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    context-path: /community
+    context-path: /community # 项目访问路径
 
 spring:
   application:
@@ -14,17 +14,65 @@ spring:
     url: jdbc:mysql://localhost:3306/community?characterEncoding=utf-8&useSSL=false&serverTimezone=Hongkong
     username: root
     password: wdmysqlmm123
-  mail:
+  mail: # 邮件配置
     host: smtp.sina.com
     port: 465
     username: memcpy0@sina.com
-    password: wdsinamm123
+    password: 97e3d34d6482962f
     protocol: smtps
     properties:
       mail:
         smtp:
           ssl:
             enable: true
+  redis: # Redis配置
+    database: 6
+    host: localhost
+    port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092 # 服务器
+    consumer:
+      group-id: community-consumer-group # 消费者分组ID
+      enable-auto-commit: true # 消费者读消息是根据偏移量,自动提交消费者Offset
+      auto-commit-interval: 3000 # 多久提交一次
+  quartz:
+    job-store-type: jdbc # 底层用的JDBC存储
+    scheduler-name: CommunityScheduler # 调度器名字
+    wait-for-jobs-to-complete-on-shutdown: false # 默认为false,用于设定是否等待任务执行完毕后容器才会关闭
+    overwrite-existing-jobs: false # 默认为false,配置的JOB是否覆盖已经存在的JOB信息
+    properties:
+      org:
+        quartz:
+          scheduler: # 集群配置
+            # 集群名，区分同一系统的不同实例，若使用集群功能，则每一个实例都要使用相同的名字
+            instanceName: COMMUNITY-SCHEDULER-INSTANCE
+            # 若是集群下，每个instanceId必须唯一
+            instanceId: AUTO # 自动生成
+          jobStore: #选择JDBC的存储方式
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            tablePrefix: QRTZ_
+            useProperties: false
+            isClustered: true
+            clusterCheckinInterval: 15000
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool #一般使用这个便可
+            threadCount: 5
+            threadPriority: 5 #线程数量，不会动态增加
+            threadsInheritContextClassLoaderOfInitializingThread: true
+
+# actuator:
+management:
+  endpoints:
+    web:
+      exposure:
+        exclude: caches
+
+# community
+community:
+  path:
+    domain: http://localhost:8080 # 项目域名
+    upload: D:/community/src/main/resources/upload # 项目图片文件夹
 
 mybatis-plus:
   configuration:
@@ -37,6 +85,7 @@ mybatis-plus:
     useGeneratedKeys: true
   mapper-locations: classpath:mapper/*.xml # mapper.xml文件位置
   type-aliases-package: com.nowcoder.community.entity
+
 
 # logger
 logging:
