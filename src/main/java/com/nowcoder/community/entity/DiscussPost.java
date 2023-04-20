@@ -19,7 +19,6 @@ public class DiscussPost {
     private int type; // 是否置顶
     private int status; // 0-正常,1-精华,2-拉黑
     private LocalDateTime createTime; // 创建时间
-    private int commentCount; // 帖子分数
-    private double score;
-
+    private int commentCount; // 帖子评论数
+    private double score; // 帖子评分,后续通过其对帖子排序
 }

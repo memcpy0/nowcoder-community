@@ -21,5 +21,5 @@ public class User {
     private int status; // 用户状态
     private String activationCode; // 激活码
     private String headerUrl; // 用户头像地址
-    private LocalDateTime createTime;
+    private LocalDateTime createTime; // 创建时间
 }

@@ -8,9 +8,9 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserMapper extends BaseMapper<User> {
     User selectById(int id);
 
-    User selectByName(String username);
+    User selectByName(String username); // 有索引
 
-    User selectByEmail(String email);
+    User selectByEmail(String email); // 有索引
 
     int insertUser(User user);
 
