@@ -71,7 +71,7 @@ management:
 # community
 community:
   path:
-    domain: http://localhost:8080 # 项目域名
+    domain: http://localhost:8080 # 项目域名,用于邮件中的激活链接
     upload: D:/community/src/main/resources/upload # 项目图片文件夹
 
 mybatis-plus:

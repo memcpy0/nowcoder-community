@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" crossorigin="anonymous">
 	<link rel="stylesheet" th:href="@{/css/global.css}" />
 	<link rel="stylesheet" th:href="@{/css/login.css}" />
 	<title>牛客网-注册</title>
@@ -79,7 +79,7 @@
 					<div class="form-group row mt-4">
 						<label for="password" class="col-sm-2 col-form-label text-right">密码:</label>
 						<div class="col-sm-10">
-							<input type="password" class="form-control" id="password" name="passoword"
+							<input type="password" class="form-control" id="password" name="password"
                                    th:class="|form-control ${passwordMsg!=null?'is-invalid':''}|"
 								   th:value="${user.password!=null?user.password:''}"
 								   placeholder="请输入您的密码!" required>
@@ -184,9 +184,9 @@
 		</footer>
 	</div>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+	<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+	<script th:src="@{/js/popper.min.js}" crossorigin="anonymous"></script>
+	<script th:src="@{/js/bootstrap.min.js}" crossorigin="anonymous"></script>
 	<script th:src="@{/js/global.js}"></script>
 	<script th:src="@{/js/register.js}"></script>
 </body>
