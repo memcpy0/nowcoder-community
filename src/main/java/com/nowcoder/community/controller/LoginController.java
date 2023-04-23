@@ -5,11 +5,14 @@ import com.nowcoder.community.constant.ActivationStatus;
 import com.nowcoder.community.constant.ExpiredTime;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.util.CommunityUtil;
+import com.nowcoder.community.util.RedisKeyUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -25,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class LoginController {
@@ -97,41 +101,13 @@ public class LoginController {
      * @param response
      * @param session
      */
-    @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
-    public void getKaptcha(HttpServletResponse response, HttpSession session) {
-        // 生成验证码
-        String text = kaptchaProducer.createText();
-        BufferedImage image = kaptchaProducer.createImage(text);
-        // 将验证码存入session
-        session.setAttribute("kaptcha", text);
-
-        // 将图片输出给浏览器
-        response.setContentType("image/png");
-        try {
-            OutputStream os = response.getOutputStream();
-            ImageIO.write(image, "png", os);
-        } catch (IOException e) {
-            logger.error("响应验证码失败", e.getMessage());
-        }
-    }
-//    @Autowired
-//    private RedisTemplate redisTemplate;
 //    @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
 //    public void getKaptcha(HttpServletResponse response, HttpSession session) {
 //        // 生成验证码
 //        String text = kaptchaProducer.createText();
 //        BufferedImage image = kaptchaProducer.createImage(text);
 //        // 将验证码存入session
-//        // session.setAttribute("kaptcha", text);
-//        // 类似Session的JSessionID
-//        String kaptchaOwner = CommunityUtil.generateUUID();
-//        Cookie cookie = new Cookie("kaptchaOwner", kaptchaOwner);
-//        cookie.setMaxAge(60);
-//        cookie.setPath(contextPath);
-//        response.addCookie(cookie);
-//        // 将键:验证码存入redis
-//        String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
-//        redisTemplate.opsForValue().set(redisKey, text, 60, TimeUnit.SECONDS);
+//        session.setAttribute("kaptcha", text);
 //
 //        // 将图片输出给浏览器
 //        response.setContentType("image/png");
@@ -142,21 +118,84 @@ public class LoginController {
 //            logger.error("响应验证码失败", e.getMessage());
 //        }
 //    }
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
+    public void getKaptcha(HttpServletResponse response, HttpSession session) {
+        // 生成验证码
+        String text = kaptchaProducer.createText();
+        BufferedImage image = kaptchaProducer.createImage(text);
+        // 将验证码存入session
+        // session.setAttribute("kaptcha", text);
+        // 类似Session的JSessionID
+        String kaptchaOwner = CommunityUtil.generateUUID();
+        Cookie cookie = new Cookie("kaptchaOwner", kaptchaOwner);
+        cookie.setMaxAge(60);
+        cookie.setPath(contextPath);
+        response.addCookie(cookie);
+        // 将键:验证码存入redis
+        String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+        redisTemplate.opsForValue().set(redisKey, text, 60, TimeUnit.SECONDS); // 设置验证码过期时间
+
+        // 将图片输出给浏览器
+        response.setContentType("image/png");
+        try {
+            OutputStream os = response.getOutputStream();
+            ImageIO.write(image, "png", os);
+        } catch (IOException e) {
+            logger.error("响应验证码失败", e.getMessage());
+        }
+    }
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
     /**
-     * 登录接口，先判断验证码是否之前，再进行验证，如果业务层生成了登录凭证，则设置Cookie
+     * 登录接口，先判断验证码是否正确，再进行验证，如果业务层生成了登录凭证，则设置Cookie
      */
+//    @RequestMapping(path = "/login", method = RequestMethod.POST) // 页面上可以勾上记住我
+//    public String login(String username, String password, String code, boolean rememberme, Model model, HttpSession session, HttpServletResponse response) {
+//        // 检查验证码
+//        String kaptcha = (String) session.getAttribute("kaptcha");
+//        if (StringUtils.isBlank(code) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
+//            model.addAttribute("codeMsg", "验证码不正确！");
+//            return "/site/login";
+//        }
+//        // 检查账号密码
+//        int expiredSeconds = rememberme ? ExpiredTime.REMEMBERME_EXPIRED_SECONDS : ExpiredTime.DEFAULT_EXPIRED_SECONDS;
+//        // 调用业务层登录方法
+//        Map<String, Object> map = userService.login(username, password, expiredSeconds);
+//
+//        if (map.containsKey("ticket")) {
+//            Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
+//            cookie.setPath(contextPath); // Cookie在整个项目都有效
+//            cookie.setMaxAge(expiredSeconds); // 自己做Session,返回一个Cookie含有Ticket,并设置Cookie的过期时间(从而设置了Session的过期时间,因为Cookie失效后就找不到Session了)
+//            response.addCookie(cookie); // 发送Cookie给客户端
+//            return "redirect:/index"; // 重定向到首页
+//        } else {
+//            model.addAttribute("usernameMsg", map.get("usernameMsg"));
+//            model.addAttribute("passwordMsg", map.get("passwordMsg"));
+//            return "/site/login";
+//        }
+//    }
     @RequestMapping(path = "/login", method = RequestMethod.POST) // 页面上可以勾上记住我
-    public String login(String username, String password, String code, boolean rememberme, Model model, HttpSession session, HttpServletResponse response) {
-        // 检查验证码
-        String kaptcha = (String) session.getAttribute("kaptcha");
-        if (StringUtils.isBlank(code) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
-            model.addAttribute("codeMsg", "验证码不正确！");
+    public String login(String username, String password, String code, boolean rememberme, Model model, /*HttpSession session,*/ HttpServletResponse response, @CookieValue("kaptchaOwner") String kaptchaOwner) {
+        String kaptcha = null;
+        if (StringUtils.isNotBlank(kaptchaOwner)) {
+            String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner); // 待登录用户的键
+            kaptcha = (String) redisTemplate.opsForValue().get(redisKey); // 找到Redis中存储的待登录用户的验证码
+        }
+        if (StringUtils.isBlank(kaptcha)) {
+            model.addAttribute("codeMsg", "验证码已过期");
+            return "/site/login";
+        } else if (StringUtils.isBlank(code)) {
+            model.addAttribute("codeMsg", "输入验证码为空");
+            return "/site/login";
+        } else if (!kaptcha.equalsIgnoreCase(code)) {
+            model.addAttribute("codeMsg", "验证码不正确");
             return "/site/login";
         }
+
         // 检查账号密码
         int expiredSeconds = rememberme ? ExpiredTime.REMEMBERME_EXPIRED_SECONDS : ExpiredTime.DEFAULT_EXPIRED_SECONDS;
         // 调用业务层登录方法
