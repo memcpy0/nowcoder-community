@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserService {
@@ -27,9 +28,11 @@ public class UserService {
     private UserMapper userMapper;
 
     public User findUserById(int id) {
-        return userMapper.selectById(id);
-    }
 
+        User user = getCache(id); // 1. 优先从缓存中取用户信息
+        if (user == null) user = initCache(id); // 2. 否则从数据库中取用户信息，并初始化缓存
+        return user;
+    }
 
     @Autowired
     private MailClient mailClient;
@@ -108,7 +111,8 @@ public class UserService {
         if (user.getStatus() == 1) { // 已激活
             return ActivationStatus.ACTIVATION_REPEAT;
         } else if (user.getActivationCode().equals(code)) {
-            userMapper.updateStatus(userId, 1); //更新激活状态
+            userMapper.updateStatus(userId, 1); // 更新激活状态
+            clearCache(userId); // 修改了用户信息
             return ActivationStatus.ACTIVATION_SUCCESS;
         } else {
             return ActivationStatus.ACTIVATION_FAILURE;
@@ -230,5 +234,25 @@ public class UserService {
     public LoginTicket findLoginTicket(String ticket) {
         String redisKey = RedisKeyUtil.getTicketKey(ticket);
         return (LoginTicket) redisTemplate.opsForValue().get(redisKey);
+    }
+
+    // 1. 优先从缓存中取值
+    private User getCache(int userId) {
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        return (User) redisTemplate.opsForValue().get(redisKey);
+    }
+
+    // 2.取不到时初始化缓存数据
+    private User initCache(int userId) {
+        User user = userMapper.selectById(userId);
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.opsForValue().set(redisKey, user, 3600, TimeUnit.SECONDS); // 设置缓存时间
+        return user;
+    }
+
+    // 3. 数据变更时清除缓存数据
+    private void clearCache(int userId) {
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.delete(redisKey);
     }
 }

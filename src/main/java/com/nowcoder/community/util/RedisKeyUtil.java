@@ -17,7 +17,7 @@ public class RedisKeyUtil {
 
     private static final String PREFIX_USER = "user"; // 用户信息
     // 返回查询用户的键，用于缓存用户信息
-    public static String getTicketKey(int userId) {
+    public static String getUserKey(int userId) {
         return PREFIX_USER + SPLIT + userId;
     }
 }
