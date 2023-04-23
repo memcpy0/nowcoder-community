@@ -2,18 +2,23 @@ package com.nowcoder.community.controller;
 
 import com.google.code.kaptcha.Producer;
 import com.nowcoder.community.constant.ActivationStatus;
+import com.nowcoder.community.constant.ExpiredTime;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
@@ -109,5 +114,70 @@ public class LoginController {
             logger.error("响应验证码失败", e.getMessage());
         }
     }
+//    @Autowired
+//    private RedisTemplate redisTemplate;
+//    @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
+//    public void getKaptcha(HttpServletResponse response, HttpSession session) {
+//        // 生成验证码
+//        String text = kaptchaProducer.createText();
+//        BufferedImage image = kaptchaProducer.createImage(text);
+//        // 将验证码存入session
+//        // session.setAttribute("kaptcha", text);
+//        // 类似Session的JSessionID
+//        String kaptchaOwner = CommunityUtil.generateUUID();
+//        Cookie cookie = new Cookie("kaptchaOwner", kaptchaOwner);
+//        cookie.setMaxAge(60);
+//        cookie.setPath(contextPath);
+//        response.addCookie(cookie);
+//        // 将键:验证码存入redis
+//        String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+//        redisTemplate.opsForValue().set(redisKey, text, 60, TimeUnit.SECONDS);
+//
+//        // 将图片输出给浏览器
+//        response.setContentType("image/png");
+//        try {
+//            OutputStream os = response.getOutputStream();
+//            ImageIO.write(image, "png", os);
+//        } catch (IOException e) {
+//            logger.error("响应验证码失败", e.getMessage());
+//        }
+//    }
 
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+
+    /**
+     * 登录接口，先判断验证码是否之前，再进行验证，如果业务层生成了登录凭证，则设置Cookie
+     */
+    @RequestMapping(path = "/login", method = RequestMethod.POST) // 页面上可以勾上记住我
+    public String login(String username, String password, String code, boolean rememberme, Model model, HttpSession session, HttpServletResponse response) {
+        // 检查验证码
+        String kaptcha = (String) session.getAttribute("kaptcha");
+        if (StringUtils.isBlank(code) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
+            model.addAttribute("codeMsg", "验证码不正确！");
+            return "/site/login";
+        }
+        // 检查账号密码
+        int expiredSeconds = rememberme ? ExpiredTime.REMEMBERME_EXPIRED_SECONDS : ExpiredTime.DEFAULT_EXPIRED_SECONDS;
+        // 调用业务层登录方法
+        Map<String, Object> map = userService.login(username, password, expiredSeconds);
+
+        if (map.containsKey("ticket")) {
+            Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
+            cookie.setPath(contextPath); // Cookie在整个项目都有效
+            cookie.setMaxAge(expiredSeconds); // 自己做Session,返回一个Cookie含有Ticket,并设置Cookie的过期时间(从而设置了Session的过期时间,因为Cookie失效后就找不到Session了)
+            response.addCookie(cookie); // 发送Cookie给客户端
+            return "redirect:/index"; // 重定向到首页
+        } else {
+            model.addAttribute("usernameMsg", map.get("usernameMsg"));
+            model.addAttribute("passwordMsg", map.get("passwordMsg"));
+            return "/site/login";
+        }
+    }
+
+    @RequestMapping(path = "/logout", method = RequestMethod.GET)
+    public String logout(@CookieValue("ticket") String ticket) {
+        userService.logout(ticket);
+        return "redirect:/login"; // 重定向默认是GET请求
+    }
 }
