@@ -1,5 +1,6 @@
 package com.nowcoder.community.config;
 
+import com.nowcoder.community.interceptor.LoginRequiredInterceptor;
 import com.nowcoder.community.interceptor.LoginTicketInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -11,9 +12,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     private LoginTicketInterceptor loginTicketInterceptor;
 
+    @Autowired
+    private LoginRequiredInterceptor loginRequiredInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginTicketInterceptor) // 在这里还是拦截一切请求
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg"); // 不拦截静态资源 /**指的是/static目录下的所有文件夹
+        registry.addInterceptor(loginRequiredInterceptor)
+            .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg"); // 放行对静态资源的访问,要拦截并处理的动态资源加注解就行
     }
 }
