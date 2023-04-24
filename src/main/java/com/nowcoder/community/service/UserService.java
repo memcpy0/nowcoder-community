@@ -275,6 +275,8 @@ public class UserService {
      * @return
      */
     public int updatePassword(int userId, String password) {
-        return userMapper.updatePassword(userId, password);
+        int rows = userMapper.updatePassword(userId, password);
+        clearCache(userId); // 先清理缓存
+        return rows;
     }
 }

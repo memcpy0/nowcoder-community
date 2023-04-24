@@ -121,4 +121,42 @@ public class UserController {
         }
     }
 
+    /**
+     * 更新密码
+     * @param oldPassword
+     * @param newPassword
+     * @param model
+     * @return
+     */
+//    @LoginRequired
+    @RequestMapping(path = "/password", method = RequestMethod.POST)
+    public String uploadPassword(String oldPassword, String newPassword, Model model) {
+        model.addAttribute("oldPassword", oldPassword);
+        model.addAttribute("newPassword", newPassword);
+        if (StringUtils.isBlank(oldPassword)) {
+            model.addAttribute("oldPasswordError", "需要输入旧密码!");
+            return "/site/setting"; // 返回设置界面
+        }
+        if (StringUtils.isBlank(newPassword)) {
+            model.addAttribute("newPasswordError", "需要输入新密码!");
+            return "/site/setting"; // 返回设置界面
+        }
+        User user = hostHolder.getUser();
+        // 验证密码
+        String oldPasswordMd5 = CommunityUtil.md5(oldPassword + user.getSalt());
+        if (!user.getPassword().equals(oldPasswordMd5)) {
+            model.addAttribute("oldPasswordError", "旧密码不正确!");
+            model.addAttribute("oldPassword", null); // 需要重新填写旧密码
+            return "/site/setting"; // 返回设置界面
+        }
+
+        if (oldPassword.equals(newPassword)) {
+            model.addAttribute("newPasswordError", "旧密码与新密码不能相同!");
+            model.addAttribute("newPassword", null); // 需要重新填写新密码
+            return "/site/setting"; // 返回设置界面
+        }
+        String newPasswordMd5 = CommunityUtil.md5(newPassword + user.getSalt());
+        userService.updatePassword(user.getId(), newPasswordMd5); // 更新为新密码
+        return "redirect:/index"; // 重定向到首页
+    }
 }
