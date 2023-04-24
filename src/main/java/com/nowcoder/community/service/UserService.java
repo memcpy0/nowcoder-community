@@ -28,10 +28,10 @@ public class UserService {
     private UserMapper userMapper;
 
     public User findUserById(int id) {
-
         User user = getCache(id); // 1. 优先从缓存中取用户信息
         if (user == null) user = initCache(id); // 2. 否则从数据库中取用户信息，并初始化缓存
         return user;
+//        return userMapper.selectById(id);
     }
 
     @Autowired
@@ -167,7 +167,7 @@ public class UserService {
 //        return map;
 //    }
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
     public Map<String, Object> login(String username, String password, int expiredSeconds) {
         Map<String, Object> map = new HashMap<>();
         // 空值处理
@@ -254,5 +254,25 @@ public class UserService {
     private void clearCache(int userId) {
         String redisKey = RedisKeyUtil.getUserKey(userId);
         redisTemplate.delete(redisKey);
+    }
+
+    /**
+     * 更新头像文件URL
+     * @param userId
+     * @param headerUrl
+     * @return
+     */
+    public int updateHeader(int userId, String headerUrl) {
+        return userMapper.updateHeader(userId, headerUrl);
+    }
+
+    /**
+     * 更新用户密码
+     * @param userId
+     * @param password
+     * @return
+     */
+    public int updatePassword(int userId, String password) {
+        return userMapper.updatePassword(userId, password);
     }
 }

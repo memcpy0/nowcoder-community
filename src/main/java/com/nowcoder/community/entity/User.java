@@ -5,11 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class User {
     private int id; // 用户ID
@@ -21,5 +21,5 @@ public class User {
     private int status; // 用户状态
     private String activationCode; // 激活码
     private String headerUrl; // 用户头像地址
-    private LocalDateTime createTime; // 创建时间
+    private Date createTime; // 创建时间
 }
