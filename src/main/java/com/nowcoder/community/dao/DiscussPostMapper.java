@@ -22,4 +22,11 @@ public interface DiscussPostMapper extends BaseMapper<DiscussPost> {
      * @return
      */
     int insertDiscussPost(DiscussPost discussPost);
+
+    /**
+     * 帖子详情
+     * @param id
+     * @return
+     */
+    DiscussPost selectDiscussPostById(int id);
 }
