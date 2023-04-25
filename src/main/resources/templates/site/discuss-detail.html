@@ -76,7 +76,7 @@
 				<!-- 作者 -->
 				<div class="media pb-3 border-bottom">
 					<a th:href="@{|/user/profile/${user.id}|}">
-						<img th:src="@{user.headUrl}" class="align-self-start mr-4 rounded-circle user-header" alt="用户头像" >
+						<img th:src="${user.headerUrl}" class="align-self-start mr-4 rounded-circle user-header" alt="用户头像" >
 					</a>
 					<div class="media-body">
 						<div class="mt-0 text-warning" th:utext="${user.username}">寒江雪</div>
@@ -129,7 +129,7 @@
 							<div class="mt-0">
 								<span class="font-size-12 text-success" th:utext="${cvo.user.username}">掉脑袋切切</span>
 								<span class="badge badge-secondary float-right floor">
-									<i th:text="${page.offset + cvoStat}">1#</i> <!-- thymeleaf提供的循环次数=循环变量名+Stat -->
+									<i th:text="${page.offset + cvoStat.count}">1#</i> <!-- thymeleaf提供的循环次数=循环变量名+Stat -->
 								</span> <!-- 循环第几次这就是第几楼,而且是分页循环 -->
 							</div>
 							<div class="mt-2" th:utext="${cvo.comment.content}">
@@ -168,9 +168,9 @@
 																		 class="text-primary">
 												<b>赞</b> <i>1</i></a>
 											<li class="d-inline ml-2">|</li>
-											<li class="d-inline ml-2"><a th:href="|huifu-${rvoStat.count}|" data-toggle="collapse" class="text-primary">回复</a></li>
+											<li class="d-inline ml-2"><a th:href="|#huifu-${rvoStat.count}|" data-toggle="collapse" class="text-primary">回复</a></li>
 										</ul>
-										<div th:id="|huifu-${rvoStat.count}|" class="mt-4 collapse">
+										<div th:id="|huifu-${rvoStat.count}|" class="mt-4 collapse"> <!-- 指定给谁的回复输入框 -->
 											<form method="post" th:action="@{|/comment/add/${post.id}|}">
 												<div>
 													<input type="text" class="input-size" name="content" th:placeholder="|回复${rvo.user.username}|"/>
@@ -298,8 +298,9 @@
 		</footer>
 	</div>
 	 <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
- <script th:src="@{/js/popper.min.js}" crossorigin="anonymous"></script>
- <script th:src="@{/js/bootstrap.min.js}" crossorigin="anonymous"></script><script th:src="@{/js/global.js}"></script>
+	 <script th:src="@{/js/popper.min.js}" crossorigin="anonymous"></script>
+	 <script th:src="@{/js/bootstrap.min.js}" crossorigin="anonymous"></script><script th:src="@{/js/global.js}"></script>
 	<script th:src="@{/js/discuss.js}"></script>
+	<script th:src="@{/js/global.js}"></script>
 </body>
 </html>

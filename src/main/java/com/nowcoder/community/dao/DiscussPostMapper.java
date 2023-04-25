@@ -29,4 +29,12 @@ public interface DiscussPostMapper extends BaseMapper<DiscussPost> {
      * @return
      */
     DiscussPost selectDiscussPostById(int id);
+
+    /**
+     * 更新帖子评论的数量
+     * @param discussPostId
+     * @param commentCount
+     * @return
+     */
+    int updateCommentCount(int discussPostId, int commentCount);
 }

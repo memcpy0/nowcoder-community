@@ -7,6 +7,7 @@ import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.DiscussPostService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
+import com.nowcoder.community.util.SensitiveFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,6 +53,9 @@ public class DiscussPostController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private SensitiveFilter sensitiveFilter;
     @RequestMapping(path = "/detail/{discussPostId}", method = RequestMethod.GET)
     public String getDiscussPost(@PathVariable("discussPostId") int discussPostId, Model model, Page page) {
         // 帖子
@@ -63,7 +67,7 @@ public class DiscussPostController {
         model.addAttribute("user", user);
         // 评论分页信息
         page.setLimit(5);
-        page.setPath("/discuss/detail" + discussPostId);
+        page.setPath("/discuss/detail/" + discussPostId);
         page.setRows(post.getCommentCount());
 
         // 评论：给帖子的评论
@@ -106,4 +110,6 @@ public class DiscussPostController {
         model.addAttribute("comments", commentVoList);
         return "/site/discuss-detail";
     }
+
+
 }

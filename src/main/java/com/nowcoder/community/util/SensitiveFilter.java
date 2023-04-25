@@ -33,7 +33,7 @@ public class SensitiveFilter {
             while ((keyword = reader.readLine()) != null) {
                 // 添加到前缀树
                 this.addKeyword(keyword);
-//                System.out.println(keyword);
+                System.out.println(keyword);
             }
         } catch (IOException e) {
             logger.error("加载敏感词文件失败: " + e.getMessage());
