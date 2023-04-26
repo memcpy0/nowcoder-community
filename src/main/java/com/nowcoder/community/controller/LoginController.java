@@ -120,6 +120,12 @@ public class LoginController {
 //    }
     @Autowired
     private RedisTemplate redisTemplate;
+
+    /**
+     * 生成验证码
+     * @param response
+     * @param session
+     */
     @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
     public void getKaptcha(HttpServletResponse response, HttpSession session) {
         // 生成验证码

@@ -1,5 +1,6 @@
 package com.nowcoder.community.controller;
 
+import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.constant.MessageStatus;
 import com.nowcoder.community.entity.HostHolder;
 import com.nowcoder.community.entity.Message;
@@ -31,8 +32,9 @@ public class MessageController {
     private UserService userService;
 
     /**
-     * 私信列表页面
+     * 私信列表页面,需要登录
      */
+    @LoginRequired
     @RequestMapping(path = "/letter/list", method = RequestMethod.GET)
     public String getLetterList(Model model, Page page) {
         User user = hostHolder.getUser();
@@ -65,12 +67,13 @@ public class MessageController {
     }
 
     /**
-     * 会话详情页
+     * 会话详情页,需要登录
      * @param conversationId
      * @param page
      * @param model
      * @return
      */
+    @LoginRequired
     @RequestMapping(path = "/letter/detail/{conversationId}", method = RequestMethod.GET)
     public String getLetterDetail(@PathVariable("conversationId") String conversationId, Page page, Model model) {
         // 分页信息
@@ -114,11 +117,12 @@ public class MessageController {
     }
 
     /**
-     * 发送私信
+     * 发送私信，需要登录
      * @param toName
      * @param content
      * @return
      */
+    @LoginRequired
     @RequestMapping(path = "/letter/send", method = RequestMethod.POST)
     @ResponseBody
     public String sendLetter(String toName, String content) {

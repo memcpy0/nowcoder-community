@@ -85,7 +85,8 @@ public class UserService {
         user.setPassword(CommunityUtil.md5(user.getPassword() + user.getSalt()));
         user.setType(0); // 默认都是普通用户
         user.setStatus(0); // 没有激活
-        user.setActivationCode(CommunityUtil.generateUUID()); //设置激活码
+        user.setActivationCode(CommunityUtil.generateUUID()); //
+        user.setCreateTime(new Date());
         user.setHeaderUrl(String.format("http://images.nowcoder.com/head/%dt.png", new Random().nextInt(1000))); // 设置随机头像
         userMapper.insertUser(user); // 添加到数据库, Mybatis/Mybatis—plus自动生成ID,并回填到对象
 

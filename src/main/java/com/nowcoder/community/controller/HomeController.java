@@ -1,9 +1,11 @@
 package com.nowcoder.community.controller;
 
+import com.nowcoder.community.constant.EntityTypes;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.DiscussPostService;
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,9 @@ public class HomeController {
     private DiscussPostService discussPostService;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LikeService likeService;
 
     /**
      * 返回社区首页，查询所有帖子
@@ -44,6 +49,8 @@ public class HomeController {
                 map.put("post", post);
                 User user = userService.findUserById(post.getUserId()); // 还需要'连表'查询用户数据(用户名,用户头像等)
                 map.put("user", user); //
+                long likeCount = likeService.findEntityLikeCount(EntityTypes.ENTITY_TYPE_POST, post.getId()); // 赞的数量
+                map.put("likeCount", likeCount);
                 discussPosts.add(map);
             }
         }
