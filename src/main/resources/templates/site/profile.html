@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" crossorigin="anonymous">
 	<link rel="stylesheet" th:href="@{/css/global.css}" />
 	<title>牛客网-个人主页</title>
 </head>
@@ -77,7 +77,7 @@
 				</div>
 				<!-- 个人信息 -->
 				<div class="media mt-5">
-					<img th:src="@{user.headUrl}" class="align-self-start mr-4 rounded-circle" alt="用户头像" style="width:50px;">
+					<img th:src="${user.headerUrl}" class="align-self-start mr-4 rounded-circle" alt="用户头像" style="width:50px;">
 					<div class="media-body">
 						<h5 class="mt-0 text-warning">
 							<span th:utext="${user.username}">nowcoder</span>
@@ -88,7 +88,7 @@
 								关注TA</button> <!-- 登录用户访问自己的空间,不显示这个按钮 -->
 						</h5>
 						<div class="text-muted mt-3">
-							<span>注册于 <i class="text-muted" th:text="${#temporals.format(user.createTime, 'yyyy-MM-dd HH:mm:ss')}">2015-06-12 15:20:12</i></span>
+							<span>注册于 <i class="text-muted" th:text="${#dates.format(user.createTime, 'yyyy-MM-dd HH:mm:ss')}">2015-06-12 15:20:12</i></span>
 						</div>
 						<div class="text-muted mt-3 mb-5">
 							<span>关注了 <a class="text-primary" th:href="@{|/followees/${user.id}|}" th:text="${followeeCount}">5</a> 人</span>
@@ -163,9 +163,9 @@
 		</footer>
 	</div>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+	 <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+	<script th:src="@{/js/popper.min.js}" crossorigin="anonymous"></script>
+	<script th:src="@{/js/bootstrap.min.js}" crossorigin="anonymous"></script>
 	<script th:src="@{/js/global.js}"></script>
 	<script th:src="@{/js/profile.js}"></script>
 </body>
