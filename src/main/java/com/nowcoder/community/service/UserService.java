@@ -279,4 +279,8 @@ public class UserService {
         clearCache(userId); // 先清理缓存
         return rows;
     }
+
+    public User findUserByName(String username) {
+        return userMapper.selectByName(username);
+    }
 }
