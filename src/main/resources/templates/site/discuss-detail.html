@@ -146,8 +146,24 @@
 											<b th:text="${cvo.likeStatus==1?'已赞':'赞'}">赞</b>(<i th:text="${cvo.likeCount}">1</i>)
 										</a>
 									<li class="d-inline ml-2">|</li>
-									<li class="d-inline ml-2"><a href="#" class="text-primary">回复(<i th:text="${cvo.replyCount}">2</i>)</a></li>
+									<li class="d-inline ml-2">
+										<a th:href="|#myReply-${cvoStat.count}|" class="text-primary">回复(<i th:text="${cvo.replyCount}">2</i>)
+										</a>
+									</li>
 								</ul>
+								<div th:id="|myReply-${cvoStat.count}|" class="mt-4"> <!-- 指定给当前评论用户的回复输入框 -->
+									<form method="post" th:action="@{|/comment/add/${post.id}|}">
+										<div>
+											<input type="text" class="input-size" name="content" th:placeholder="|回复${cvo.user.username}|"/>
+											<input type="hidden" name="entityType" value="2">
+											<input type="hidden" name="entityId" th:value="${cvo.comment.id}"> <!-- 评论的ID -->
+<!--											<input type="hidden" name="entityId" th:value="${cvo.user.id}"> &lt;!&ndash; 回复给谁 &ndash;&gt;-->
+										</div>
+										<div class="text-right mt-2">
+											<button type="submit" class="btn btn-primary btn-sm" onclick="#">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>
+										</div>
+									</form>
+								</div>
 							</div>
 							<!-- 回复列表 -->
 							<ul class="list-unstyled mt-4 bg-gray p-3 font-size-12 text-muted" th:each="rvo:${cvo.replys}">
@@ -176,34 +192,34 @@
 												<a th:href="|#huifu-${rvoStat.count}|" data-toggle="collapse" class="text-primary">回复</a>
 											</li>
 										</ul>
-										<div th:id="|huifu-${rvoStat.count}|" class="mt-4 collapse"> <!-- 指定给谁的回复输入框 -->
+										<div th:id="|huifu-${rvoStat.count}|" class="mt-4"> <!-- 指定给谁的回复输入框 -->
 											<form method="post" th:action="@{|/comment/add/${post.id}|}">
 												<div>
 													<input type="text" class="input-size" name="content" th:placeholder="|回复${rvo.user.username}|"/>
 													<input type="hidden" name="entityType" value="2">
 													<input type="hidden" name="entityId" th:value="${cvo.comment.id}"> <!-- 评论的ID -->
-													<input type="hidden" name="entityId" th:value="${rvo.user.id}"> <!-- 回复给谁 -->
+													<input type="hidden" name="targetId" th:value="${rvo.user.id}"> <!-- 回复给谁 -->
 												</div>
 												<div class="text-right mt-2">
-													<button type="button" class="btn btn-primary btn-sm" onclick="#">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>
+													<button type="submit" class="btn btn-primary btn-sm" onclick="#">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>
 												</div>
 											</form>
 										</div>
 									</div>
 								</li>
 								<!-- 回复输入框 -->
-								<li class="pb-3 pt-3">
-									<form method="post" th:action="@{|/comment/add/${post.id}|}">
-										<div>
-											<input type="text" class="input-size" name="content" placeholder="请输入你的观点"/>
-											<input type="hidden" name="entityType" value="2">
-											<input type="hidden" name="entityId" th:value="${cvo.comment.id}"> <!-- 被评论的评论ID -->
-										</div>
-										<div class="text-right mt-2">
-											<button type="submit" class="btn btn-primary btn-sm" onclick="#">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>
-										</div>
-									</form>
-								</li>
+<!--								<li class="pb-3 pt-3">-->
+<!--									<form method="post" th:action="@{|/comment/add/${post.id}|}">-->
+<!--										<div>-->
+<!--											<input type="text" class="input-size" name="content" placeholder="请输入你的观点"/>-->
+<!--											<input type="hidden" name="entityType" value="2">-->
+<!--											<input type="hidden" name="entityId" th:value="${cvo.comment.id}"> &lt;!&ndash; 被评论的评论ID &ndash;&gt;-->
+<!--										</div>-->
+<!--										<div class="text-right mt-2">-->
+<!--											<button type="submit" class="btn btn-primary btn-sm" onclick="#">&nbsp;&nbsp;回&nbsp;&nbsp;复&nbsp;&nbsp;</button>-->
+<!--										</div>-->
+<!--									</form>-->
+<!--								</li>-->
 							</ul>
 						</div>
 					</li>

@@ -27,6 +27,12 @@ public class CommentService {
     private DiscussPostService discussPostService;
     @Autowired
     private SensitiveFilter sensitiveFilter;
+
+    /**
+     * 添加评论时需要更新Comment数据表和DiscussPost表的评论数
+     * @param comment
+     * @return
+     */
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public int addComment(Comment comment) {
         if (comment == null) {
@@ -43,5 +49,9 @@ public class CommentService {
             discussPostService.updateCommentCount(comment.getEntityId(), count);
         }
         return rows;
+    }
+
+    public Comment findCommentById(int id) {
+        return commentMapper.selectCommentById(id);
     }
 }

@@ -22,7 +22,6 @@ import java.util.*;
 @Controller
 @RequestMapping("/discuss")
 public class DiscussPostController {
-
     @Autowired
     private DiscussPostService discussPostService;
 
@@ -118,7 +117,7 @@ public class DiscussPostController {
                 List<Comment> replyList = commentService.findCommentsByEntity(EntityTypes.ENTITY_TYPE_COMMENT, comment.getId(), 0, Integer.MAX_VALUE);
                 // 回复VO列表
                 List<Map<String, Object>> replyVoList = new ArrayList<>();
-                if (replyVoList != null) {
+                if (replyList != null) {
                     for (Comment reply : replyList) {
                         Map<String, Object> replyVo = new HashMap<>();
                         // 回复
@@ -128,7 +127,6 @@ public class DiscussPostController {
                         // 回复目标
                         User target = reply.getTargetId() == 0 ? null : userService.findUserById(reply.getTargetId());
                         replyVo.put("target", target);
-                        replyVoList.add(replyVo);
 
                         // 点赞数量
                         likeCount = likeService.findEntityLikeCount(EntityTypes.ENTITY_TYPE_COMMENT, reply.getId());
