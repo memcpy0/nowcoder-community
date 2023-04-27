@@ -1,8 +1,10 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
+import com.nowcoder.community.constant.EntityTypes;
 import com.nowcoder.community.entity.HostHolder;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.service.FollowService;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
@@ -165,6 +167,8 @@ public class UserController {
     @Autowired
     private LikeService likeService;
 
+    @Autowired
+    private FollowService followService;
     /**
      * 查看个人主页,可看当前用户的主页或任意用户的主页
      */
@@ -179,6 +183,18 @@ public class UserController {
         // 点赞数量
         int likeCount = likeService.findUserLikeCount(userId);
         model.addAttribute("likeCount", likeCount);
+        // 关注数量
+        int followeeCount = (int) followService.findFolloweeCount(userId, EntityTypes.ENTITY_TYPE_USER);
+        model.addAttribute("followeeCount", followeeCount);
+        // 粉丝数量
+        long followerCount = followService.findFollowerCount(EntityTypes.ENTITY_TYPE_USER, userId);
+        model.addAttribute("followerCount", followerCount);
+        // 是否已关注
+        boolean hasFollowed = false;
+        if (hostHolder.getUser() != null) {
+            hasFollowed = followService.hasFollowed(hostHolder.getUser().getId(), EntityTypes.ENTITY_TYPE_USER, userId);
+        }
+        model.addAttribute("hasFollowed", hasFollowed);
 
         return "/site/profile";
     }

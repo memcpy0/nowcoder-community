@@ -33,4 +33,19 @@ public class RedisKeyUtil {
     public static String getUserKey(int userId) {
         return PREFIX_USER + SPLIT + userId;
     }
+
+    private static final String PREFIX_FOLLOWEE = "followee";
+    private static final String PREFIX_FOLLOWER = "follower";
+
+    // 某个用户关注的实体(用户关注的用户/帖子/评论)
+    // followee:userId:entityType -> zset(entityId,now) // now为当前时间,用它来排序
+    public static String getFolloweeKey(int userId, int entityType) {
+        return PREFIX_FOLLOWEE + SPLIT + userId + SPLIT + entityType;
+    }
+
+    // 某个实体(帖子/评论/用户)的粉丝
+    // follower:entityType:entityId -> zset(userId,now)
+    public static String getFollowerKey(int entityType, int entityId) {
+        return PREFIX_FOLLOWER + SPLIT + entityType + SPLIT + entityId;
+    }
 }
