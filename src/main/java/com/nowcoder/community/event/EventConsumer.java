@@ -2,8 +2,11 @@ package com.nowcoder.community.event;
 
 import com.alibaba.fastjson.JSONObject;
 import com.nowcoder.community.constant.MessageTopicTypes;
+import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.Event;
 import com.nowcoder.community.entity.Message;
+import com.nowcoder.community.service.DiscussPostService;
+import com.nowcoder.community.service.ElasticsearchService;
 import com.nowcoder.community.service.MessageService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -23,6 +26,10 @@ public class EventConsumer {
     @Autowired
     private MessageService messageService;
 
+    /**
+     * 消费点赞、关注、评论事件
+     * @param record
+     */
     @KafkaListener(topics = {MessageTopicTypes.TOPIC_COMMENT, MessageTopicTypes.TOPIC_LIKE, MessageTopicTypes.TOPIC_FOLLOW})
     public void handleCommentMessage(ConsumerRecord record) {
         if (record == null || record.value() == null) {
@@ -54,5 +61,29 @@ public class EventConsumer {
         }
         message.setContent(JSONObject.toJSONString(content));
         messageService.addMessage(message);
+    }
+
+    @Autowired
+    private DiscussPostService discussPostService;
+    @Autowired
+    private ElasticsearchService elasticsearchService;
+
+    /**
+     * 消费发帖事件
+     * @param record
+     */
+    @KafkaListener(topics = {MessageTopicTypes.TOPIC_PUBLISH})
+    public void handlePublishMessage(ConsumerRecord record) {
+        if (record == null || record.value() == null) {
+            logger.error("消息的内容为空！");
+            return;
+        }
+        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+        if (event == null) {
+            logger.error("消息格式错误！");
+            return;
+        }
+        DiscussPost post = discussPostService.findDiscussPostById(event.getEntityId());
+        elasticsearchService.saveDiscussPost(post); // 将相关帖子（刚发布或修改过）存储在ES中
     }
 }

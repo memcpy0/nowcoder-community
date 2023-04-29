@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" crossorigin="anonymous">
 	<link rel="stylesheet" th:href="@{/css/global.css}" /> <!-- 相对路径用thymeleaf找到static下的资源 -->
 	<title>牛客网-搜索结果</title>
 </head>
@@ -75,7 +75,7 @@
 							</div>
 							<div class="text-muted font-size-12">
 								<u class="mr-3" th:utext="${map.user.username}">寒江雪</u> 发布于
-								<b th:text="${#temporals.format(map.post.createTime, 'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</b>
+								<b th:text="${#dates.format(map.post.createTime, 'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</b>
 								<ul class="d-inline float-right">
 									<li class="d-inline ml-2">赞 <i th:text="${map.likeCount}">11</i> </li>
 									<li class="d-inline ml-2">|</li>
@@ -165,9 +165,8 @@
 		</footer>
 	</div>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
-	<script th:src="@{/js/global.js}"></script>
+	 <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+ <script th:src="@{/js/popper.min.js}" crossorigin="anonymous"></script>
+ <script th:src="@{/js/bootstrap.min.js}" crossorigin="anonymous"></script><script th:src="@{/js/global.js}"></script>
 </body>
 </html>

@@ -62,6 +62,15 @@ public class CommentController {
         }
         eventProducer.fireEvent(event);
 
+        // 当评论的目标是帖子时，触发发帖事件
+        if (comment.getEntityType() == EntityTypes.ENTITY_TYPE_POST) {
+            event = new Event()
+                    .setTopic(MessageTopicTypes.TOPIC_PUBLISH)
+                    .setUserId(comment.getUserId())
+                    .setEntityType(EntityTypes.ENTITY_TYPE_POST)
+                    .setEntityId(discussPostId);
+            eventProducer.fireEvent(event);
+        }
         return "redirect:/discuss/detail/" + discussPostId; // 重定向到帖子详情界面
     }
 

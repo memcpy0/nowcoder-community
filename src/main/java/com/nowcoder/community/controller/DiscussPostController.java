@@ -2,7 +2,9 @@ package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.constant.EntityTypes;
+import com.nowcoder.community.constant.MessageTopicTypes;
 import com.nowcoder.community.entity.*;
+import com.nowcoder.community.event.EventProducer;
 import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.DiscussPostService;
 import com.nowcoder.community.service.LikeService;
@@ -28,6 +30,8 @@ public class DiscussPostController {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private EventProducer eventProducer;
     /**
      * 发布帖子，需要登录
      * @param title
@@ -50,7 +54,15 @@ public class DiscussPostController {
         post.setCreateTime(new Date());
         discussPostService.addDiscussPost(post);
 
-        // 报错的情况,将来统一处理.
+        // 触发发帖事件
+        Event event = new Event()
+                .setTopic(MessageTopicTypes.TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(EntityTypes.ENTITY_TYPE_POST)
+                .setEntityId(post.getId());
+        eventProducer.fireEvent(event);
+
+        // 报错的情况,将来统一处理
         return CommunityUtil.getJSONString(0, "发布成功!");
     }
 
@@ -65,7 +77,7 @@ public class DiscussPostController {
 
     @Autowired
     private LikeService likeService;
-
+    // Spring注入方式
     /**
      * 查看帖子详情
      * @param discussPostId
@@ -136,7 +148,7 @@ public class DiscussPostController {
                         replyVo.put("likeStatus", likeStatus);
                         replyVoList.add(replyVo);
                     }
-                }
+                } // TODO: 缓存
                 commentVo.put("replys", replyVoList);
                 // 回复数量
                 int replyCount = commentService.findCommentCount(EntityTypes.ENTITY_TYPE_COMMENT, comment.getId());
