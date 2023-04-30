@@ -66,4 +66,13 @@ public class HomeController {
     public String getErrorPage() {
         return "/error/500";
     }
+
+    /**
+     * 权限不足时的页面
+     * @return
+     */
+    @RequestMapping(path = "/denied", method = RequestMethod.GET)
+    public String getDeniedPage() {
+        return "/error/404";
+    }
 }

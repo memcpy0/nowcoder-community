@@ -3,6 +3,10 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- 访问该页面时,在此处生成CSRF令牌 -->
+	<!-- <meta name="_csrf" th:content="${_csrf.token}">
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"> -->
+
 	<link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
 	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" crossorigin="anonymous">
 	<link rel="stylesheet" th:href="@{/css/global.css}" />
@@ -147,11 +151,11 @@
 										</a>
 									<li class="d-inline ml-2">|</li>
 									<li class="d-inline ml-2">
-										<a th:href="|#myReply-${cvoStat.count}|" class="text-primary">回复(<i th:text="${cvo.replyCount}">2</i>)
+										<a th:href="|#myReply-${cvoStat.count}|" data-toggle="collapse" class="text-primary collapsed" aria-expanded="false">回复(<i th:text="${cvo.replyCount}">2</i>)
 										</a>
 									</li>
 								</ul>
-								<div th:id="|myReply-${cvoStat.count}|" class="mt-4"> <!-- 指定给当前评论用户的回复输入框 -->
+								<div th:id="|myReply-${cvoStat.count}|" class="mt-4 collapse"> <!-- 指定给当前评论用户的回复输入框 -->
 									<form method="post" th:action="@{|/comment/add/${post.id}|}">
 										<div>
 											<input type="text" class="input-size" name="content" th:placeholder="|回复${cvo.user.username}|"/>
@@ -189,10 +193,10 @@
 											</a>
 											<li class="d-inline ml-2">|</li>
 											<li class="d-inline ml-2">
-												<a th:href="|#huifu-${rvoStat.count}|" data-toggle="collapse" class="text-primary">回复</a>
+												<a th:href="|#huifu-${rvoStat.count}|" data-toggle="collapse" class="text-primary collapsed" aria-expanded="false">回复</a>
 											</li>
 										</ul>
-										<div th:id="|huifu-${rvoStat.count}|" class="mt-4"> <!-- 指定给谁的回复输入框 -->
+										<div th:id="|huifu-${rvoStat.count}|" class="mt-4 collapse"> <!-- 指定给谁的回复输入框 -->
 											<form method="post" th:action="@{|/comment/add/${post.id}|}">
 												<div>
 													<input type="text" class="input-size" name="content" th:placeholder="|回复${rvo.user.username}|"/>

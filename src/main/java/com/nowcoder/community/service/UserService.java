@@ -1,6 +1,7 @@
 package com.nowcoder.community.service;
 
 import com.nowcoder.community.constant.ActivationStatus;
+import com.nowcoder.community.constant.AuthorityTypes;
 import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.LoginTicket;
@@ -12,14 +13,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -284,4 +283,30 @@ public class UserService {
     public User findUserByName(String username) {
         return userMapper.selectByName(username);
     }
+
+    /**
+     * 获取指定用户的权限集合
+     * @param userId
+     * @return
+     */
+    public Collection<? extends GrantedAuthority> getAuthorities(int userId) {
+        User user = this.findUserById(userId);
+        List<GrantedAuthority> list = new ArrayList<>();
+        list.add(new GrantedAuthority() {
+            @Override
+            public String getAuthority() {
+                // 通过type判断，不同type返回不同权限名
+                switch (user.getType()) { // 0-普通用户; 1-超级管理员; 2-版主
+                    case 1: // 系统中每个用户只有一个权限 // 管理员
+                        return AuthorityTypes.AUTHORITY_ADMIN;
+                    case 2: // 版主
+                        return AuthorityTypes.AUTHORITY_MODERATOR;
+                    default: // 普通用户
+                        return AuthorityTypes.AUTHORITY_USER;
+                }
+            }
+        });
+        return list;
+    }
+
 }

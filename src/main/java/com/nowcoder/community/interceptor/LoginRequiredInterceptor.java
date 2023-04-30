@@ -2,7 +2,6 @@ package com.nowcoder.community.interceptor;
 
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.HostHolder;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -12,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
+@Deprecated
 @Component
 public class LoginRequiredInterceptor implements HandlerInterceptor {
     @Autowired
