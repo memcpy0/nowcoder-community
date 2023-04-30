@@ -17,4 +17,8 @@ public class MessageTopicTypes {
      * 主题：发布帖子事件，用于ES搜索
      */
     public static final String TOPIC_PUBLISH = "publish";
+    /**
+     * 主题：删除帖子事件，删除时使用
+     */
+    public static final String TOPIC_DELETE = "delete";
 }

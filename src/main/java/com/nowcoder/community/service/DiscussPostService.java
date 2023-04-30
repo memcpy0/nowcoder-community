@@ -69,4 +69,29 @@ public class DiscussPostService {
     public int updateCommentCount(int id, int commentCount) {
         return discussPostMapper.updateCommentCount(id, commentCount);
     }
+
+    /**
+     * 设置是否置顶 0是正常,1是置顶
+     * @param id
+     * @param type
+     * @return
+     */
+    public int updateType(int id, int type) {
+        return discussPostMapper.updateType(id, type);
+    }
+
+    /**
+     * 设置是否精华、拉黑
+     * 0-正常,1-精华,2-拉黑
+     * @param id
+     * @param status
+     * @return
+     */
+    public int updateStatus(int id, int status) {
+        return discussPostMapper.updateStatus(id, status);
+    }
+
+    public int updateScore(int id, double score) {
+        return discussPostMapper.updateScore(id, score);
+    }
 }

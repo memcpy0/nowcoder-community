@@ -37,4 +37,10 @@ public interface DiscussPostMapper extends BaseMapper<DiscussPost> {
      * @return
      */
     int updateCommentCount(int discussPostId, int commentCount);
+
+    int updateType(int id, int type);
+
+    int updateStatus(int id, int status);
+
+    int updateScore(int id, double score);
 }
