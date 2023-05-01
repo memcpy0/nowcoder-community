@@ -21,4 +21,8 @@ public class MessageTopicTypes {
      * 主题：删除帖子事件，删除时使用
      */
     public static final String TOPIC_DELETE = "delete";
+    /**
+     * 主题：分享帖子事件，分享时使用
+     */
+    public static final String TOPIC_SHARE = "share";
 }
