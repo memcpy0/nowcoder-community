@@ -10,8 +10,10 @@ import com.nowcoder.community.service.DiscussPostService;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
+import com.nowcoder.community.util.RedisKeyUtil;
 import com.nowcoder.community.util.SensitiveFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +34,9 @@ public class DiscussPostController {
 
     @Autowired
     private EventProducer eventProducer;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
     /**
      * 发布帖子，需要登录
      * @param title
@@ -61,6 +66,10 @@ public class DiscussPostController {
                 .setEntityType(EntityTypes.ENTITY_TYPE_POST)
                 .setEntityId(post.getId());
         eventProducer.fireEvent(event);
+
+        // 后续计算帖子分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey, post.getId());
 
         // 报错的情况,将来统一处理
         return CommunityUtil.getJSONString(0, "发布成功!");
@@ -198,8 +207,8 @@ public class DiscussPostController {
         eventProducer.fireEvent(event);
 
         // 计算帖子分数
-//        String redisKey = RedisKeyUtil.getPostScoreKey();
-//        redisTemplate.opsForSet().add(redisKey, id);
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey, id);
 
         return CommunityUtil.getJSONString(0);
     }

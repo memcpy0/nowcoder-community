@@ -10,7 +10,9 @@ import com.nowcoder.community.entity.HostHolder;
 import com.nowcoder.community.event.EventProducer;
 import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.DiscussPostService;
+import com.nowcoder.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,8 @@ public class CommentController {
     private DiscussPostService discussPostService;
     @Autowired
     private EventProducer eventProducer;
+    @Autowired
+    private RedisTemplate redisTemplate;
     /**
      * 发布评论或回复，需要登录
      * @param discussPostId
@@ -70,8 +74,11 @@ public class CommentController {
                     .setEntityType(EntityTypes.ENTITY_TYPE_POST)
                     .setEntityId(discussPostId);
             eventProducer.fireEvent(event);
+
+            // 后续计算帖子分数
+            String redisKey = RedisKeyUtil.getPostScoreKey();
+            redisTemplate.opsForSet().add(redisKey, discussPostId);
         }
         return "redirect:/discuss/detail/" + discussPostId; // 重定向到帖子详情界面
     }
-
 }

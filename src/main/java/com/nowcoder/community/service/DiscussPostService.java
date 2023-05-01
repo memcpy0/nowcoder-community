@@ -19,12 +19,12 @@ public class DiscussPostService {
      * @param userId 用户ID
      * @param offset 第几页
      * @param limit 每页多少帖子
+     * @param orderMode 最新0还是最热1排序
      * @return
      */
-    public List<DiscussPost> findDiscussPosts(int userId, int offset, int limit) {
-        return discussPostMapper.selectDiscussPosts(userId, offset, limit);
+    public List<DiscussPost> findDiscussPosts(int userId, int offset, int limit, int orderMode) {
+        return discussPostMapper.selectDiscussPosts(userId, offset, limit, orderMode);
     }
-
     /**
      * 求某个用户的发帖记录数
      * @param userId

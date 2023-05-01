@@ -3,6 +3,37 @@ server:
   servlet:
     context-path: /community # 项目访问路径
 
+# community
+community:
+  path:
+    domain: http://localhost:8080 # 项目域名,用于邮件中的激活链接
+    upload: D:/community/src/main/resources/upload # 项目图片文件夹
+# wk
+wk:
+  image:
+    command: D:/java/wkhtmltox/bin/wkhtmltoimage.exe
+    storage: D:/community/data/wk-images
+
+# qiniu 七牛云
+qiniu:
+  key:
+    access: 6RA-Uus95ZT_1znMrCMD8BpqfjT-K7OKmQTfKB48
+    secret: kPNnLFz2_tzztKUVpSLm0lYngtuHWyIq5LzTmLIL
+  bucket:
+    header:
+      name: community_header
+      url: http://pvghrij81.bkt.clouddn.com
+    share:
+      name: community_share
+      url: http://pvghvvuzm.bkt.clouddn.com
+
+# caffeine
+caffeine:
+  posts:
+    max-size: 15
+    expire-seconds: 180
+
+
 spring:
   application:
     name: nowcoder-community # 应用名称,可选
@@ -60,19 +91,12 @@ spring:
             threadCount: 5
             threadPriority: 5 #线程数量，不会动态增加
             threadsInheritContextClassLoaderOfInitializingThread: true
-
 # actuator:
 management:
   endpoints:
     web:
       exposure:
         exclude: caches
-
-# community
-community:
-  path:
-    domain: http://localhost:8080 # 项目域名,用于邮件中的激活链接
-    upload: D:/community/src/main/resources/upload # 项目图片文件夹
 
 mybatis-plus:
   configuration:

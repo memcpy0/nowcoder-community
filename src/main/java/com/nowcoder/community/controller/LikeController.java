@@ -1,6 +1,7 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
+import com.nowcoder.community.constant.EntityTypes;
 import com.nowcoder.community.constant.MessageTopicTypes;
 import com.nowcoder.community.entity.Event;
 import com.nowcoder.community.entity.HostHolder;
@@ -8,7 +9,9 @@ import com.nowcoder.community.entity.User;
 import com.nowcoder.community.event.EventProducer;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.util.CommunityUtil;
+import com.nowcoder.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +30,8 @@ public class LikeController {
     @Autowired
     private EventProducer eventProducer;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
     /**
      * 给某个帖子/评论点赞，需要登录
      * @param entityType
@@ -60,6 +65,11 @@ public class LikeController {
                     .setEntityUserId(entityUserId)
                     .setData("postId", postId);
             eventProducer.fireEvent(event);
+        }
+        if (entityType == EntityTypes.ENTITY_TYPE_POST) { // 对帖子点赞或取消赞
+            // 后续计算帖子分数
+            String redisKey = RedisKeyUtil.getPostScoreKey();
+            redisTemplate.opsForSet().add(redisKey, postId);
         }
         return CommunityUtil.getJSONString(0, null, map);
     }
