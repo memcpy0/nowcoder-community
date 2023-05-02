@@ -54,12 +54,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         AuthorityTypes.AUTHORITY_MODERATOR // 版主可以置顶加精帖子
                 )
                 .antMatchers(
-                        "/discuss/delete"
+                        "/discuss/delete",
+                        "/data/**"
+//                        "/actuator/**"
                 )
                 .hasAnyAuthority(
                         AuthorityTypes.AUTHORITY_ADMIN // 管理员才能删除讨论贴
-                )
-                .anyRequest().permitAll() // 对上面的请求路径之外的所有请求都放行;
+                ).anyRequest().permitAll() // 对上面的请求路径之外的所有请求都放行;
                 .and().csrf().disable(); // 关闭CSRF防护
 
         // 权限不够时的处理
@@ -98,5 +99,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 覆盖它默认的逻辑,才能执行我们自己的退出代码.
         http.logout().logoutUrl("/securitylogout");
     }
-
 }

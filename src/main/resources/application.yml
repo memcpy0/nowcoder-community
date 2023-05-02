@@ -30,9 +30,8 @@ qiniu:
 # caffeine
 caffeine:
   posts:
-    max-size: 15
-    expire-seconds: 180
-
+    max-size: 15 # 缓存大小
+    expire-seconds: 180 # 过期时间
 
 spring:
   application:
@@ -96,7 +95,8 @@ management:
   endpoints:
     web:
       exposure:
-        exclude: caches
+        include: "*"
+        exclude: info,caches
 
 mybatis-plus:
   configuration:
