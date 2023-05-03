@@ -29,7 +29,7 @@ qiniu:
 
 # caffeine
 caffeine:
-  posts:
+  posts: # 缓存的名字
     max-size: 15 # 缓存大小
     expire-seconds: 180 # 过期时间
 
