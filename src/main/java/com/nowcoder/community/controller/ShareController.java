@@ -43,7 +43,7 @@ public class ShareController  {
     private String shareBucketUrl;
 
     /**
-     * 异步生成长图
+     * 异步生成长图并上传到云服务器
      * @param htmlUrl
      * @return
      */
@@ -63,14 +63,14 @@ public class ShareController  {
         // 返回访问路径
         Map<String, Object> map = new HashMap<>();
         // domain + contextPath + "/share/image/" + fileName);
-        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
-//        map.put("shareUrl", shareBucketUrl + "/" + fileName);
+//        map.put("shareUrl", domain + contextPath + "/share/image/" + fileName);
+        map.put("shareUrl", shareBucketUrl + "/" + fileName);
 
         return CommunityUtil.getJSONString(0, null, map);
     }
 
     /**
-     * 获取长图
+     * 获取长图(废弃)
      */
     @Deprecated
     @RequestMapping(path = "/share/image/{fileName}", method = RequestMethod.GET)

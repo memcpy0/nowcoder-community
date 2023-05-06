@@ -17,15 +17,15 @@ wk:
 # qiniu 七牛云
 qiniu:
   key:
-    access: 6RA-Uus95ZT_1znMrCMD8BpqfjT-K7OKmQTfKB48
-    secret: kPNnLFz2_tzztKUVpSLm0lYngtuHWyIq5LzTmLIL
+    access: 70Jmio17NO4YyEQCstwrSoR8RVUYjnsXds4e5Zy2
+    secret: X-Z71y66055CebcKbXAyZw4H9c8dIqsnKKPmfaOY
   bucket:
     header:
-      name: community_header
-      url: http://pvghrij81.bkt.clouddn.com
+      name: newcoder-community-header
+      url: http://ru2p2m073.hb-bkt.clouddn.com
     share:
-      name: community_share
-      url: http://pvghvvuzm.bkt.clouddn.com
+      name: newcoder-community-share
+      url: http://ru2p48u47.hb-bkt.clouddn.com
 
 # caffeine
 caffeine:
